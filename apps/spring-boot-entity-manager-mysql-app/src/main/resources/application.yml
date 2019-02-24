@@ -2,7 +2,7 @@ spring:
   application.name: spring-boot-entity-manager-mysql-app
   output.ansi.enabled: always
   datasource:
-    url: jdbc:mysql://127.0.0.1:3306/mysql
+    url: jdbc:mysql://127.0.0.1:13306/mysql
     name: mysql
     username: mysql
     password: mysql

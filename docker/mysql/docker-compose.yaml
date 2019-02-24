@@ -19,7 +19,7 @@ services:
   mysql:
     image: mysql:8.0.15
     networks: [jpa-uuid]
-    ports: ['3306:3306']
+    ports: ['13306:3306']
     environment:
       MYSQL_DATABASE: mysql
       MYSQL_USER: mysql

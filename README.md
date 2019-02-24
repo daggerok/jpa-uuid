@@ -1,5 +1,11 @@
-# JPA UUID [![Build Status](https://travis-ci.org/daggerok/jpa-uuid.svg?branch=master)](https://travis-ci.org/daggerok/jpa-uuid)
+# JPA UUID 
 Using UUID as JPA entity identifier in different frameworks with on pg, mysql and h2 relational databases
+
+Travis CI build status: [![Build Status](https://travis-ci.org/daggerok/jpa-uuid.svg?branch=master)](https://travis-ci.org/daggerok/jpa-uuid)
+
+Read docs on [GitHub Pages](https://daggerok.github.io/jpa-uuid/)
+
+TODO: Add some JavaEE / JackartaEE, PayaraMicro, WildFly Swarm / Thourntail, KumuluzEE, etc...
 
 ## up and running needed services in docker
 

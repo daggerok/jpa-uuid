@@ -1,8 +1,6 @@
 package com.gituhb.daggerok.jpauuid;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sun.org.glassfish.gmbal.ManagedObject;
-import io.vavr.control.Try;
 import lombok.extern.log4j.Log4j2;
 import org.junit.Test;
 import org.junit.runner.RunWith;
