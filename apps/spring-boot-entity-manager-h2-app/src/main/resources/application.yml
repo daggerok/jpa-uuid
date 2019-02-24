@@ -1,0 +1,20 @@
+spring:
+  application.name: spring-boot-entity-manager-h2-app
+  output.ansi.enabled: always
+  datasource:
+    url: jdbc:h2:tcp://127.0.0.1/./target/entity-manager-h2
+    name: entity-manager-h2
+    username: entity-manager-h2
+    password: entity-manager-h2
+    hikari:
+      connection-test-query: 'SELECT 1'
+  jpa:
+    show-sql: true
+    generate-ddl: true
+    hibernate:
+      ddl-auto: create-drop
+  main:
+    allow-bean-definition-overriding: true
+logging:
+  level:
+    com.github.daggerok: DEBUG

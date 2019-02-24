@@ -1,0 +1,20 @@
+spring:
+  application.name: spring-boot-spring-data-postgres-app
+  output.ansi.enabled: always
+  datasource:
+    url: jdbc:mysql://127.0.0.1:3306/mysql
+    name: mysql
+    username: mysql
+    password: mysql
+    hikari:
+      connection-test-query: 'SELECT 1'
+  jpa:
+    show-sql: true
+    generate-ddl: true
+    hibernate:
+      ddl-auto: create-drop
+  main:
+    allow-bean-definition-overriding: true
+logging:
+  level:
+    com.github.daggerok: DEBUG

@@ -1,0 +1,20 @@
+version: '2.1'
+networks:
+  jpa-uuid:
+    driver: bridge
+services:
+  h2:
+    image: adoptopenjdk/openjdk8:x86_64-alpine-jdk8u202-b08
+    volumes: ['./target/libs:/tmp/libs']
+    command: ash -c 'java -jar /tmp/libs/h2-*.jar -tcp -tcpAllowOthers -web -webDaemon -webAllowOthers'
+    networks: [jpa-uuid]
+    ports:
+      - '8082:8082'
+      - '9092:9092'
+    healthcheck:
+      test: wget -q --spider http://127.0.0.1:8082/ || exit 1
+  docker-compose-maven-plugin-healthcheck-waiting-container:
+    image: busybox
+    depends_on:
+      h2:
+        condition: service_healthy

@@ -1,0 +1,89 @@
+sudo: required
+services:
+  - docker
+language: jvm
+jdk: openjdk8
+env:
+  global:
+    secure: removemeh4OKKaffRGkhylSK+Va2Iyp7IEzMIHcfEg/aJBt2gWOcPG3LN/gBPGNtmuN/j9zes2FyRvSycoQgsZgpJGUTWrB9GQAsLEUtoNHm89ZdHNnvLsM93tOJU/E9oG+OEj4Jo6PK27gwtCG3KcyHIOErNYDCqW1P3fOssr818UwgqG1Oc3ULuRgKJueug6t0Eu5Fw3pRXRHk3bCkBYXlySzY6mb1cJBYsUw5Q6/avQSlkmh0znKw86cQufthqbGUr3eVo4l5F59qzDfGoR57VNrdOcT6TzFToRCNMzSuSkSKeXhJ1YcZWRzmVDr+eFiwMWSf4morrIwjBoOI5HlPxmttuNfA1dOVaOw4HS2R7HHo/oaNxzGIyVbnGAReDaWAePhltGivvd5gy/+igXScbf/dcxPScLc+WHpY1HpVUo3F8wl7VSbH6uNcIJaH26GVs8KMasDHI5py6wvum5HiB1bwA/iiXyi8Nfu7i3AZGo6UlFI4NiPyfi1FUu/cZaxFv2c18dgh5OmXGufkp+VJc09VYVvco/2NrkoH16ofQrBWnnQcHiK6GRP+HJzOsXAIxBMaCLsA1pfoDUN9v9DuuqIq2qzwh+3vwRAdV1v4AdauY1kBKNwMgJjSdR9m+dTRSQETizzw4mX1tGguPDtW4TtMF1vlWx0bLpHrfyg=
+node_js: lts/*
+install: true
+addons:
+  apt:
+    packages:
+      - sudo
+      - lsof
+      - wget
+      - bash
+      - curl
+      - jq
+      - unzip
+      - docker-ce
+      - python-pip
+before_install:
+  - sudo pip install docker-compose httpie >/dev/null 2>&1
+  - source <(curl -s https://raw.githubusercontent.com/daggerok/bash-functions/master/main.bash)
+  - stop_any 80 5432
+script:
+  - ./mvnw -DskipTests >/dev/null
+  - ./mvnw -f docker/all/pom.xml -P up >/dev/null
+  - ./mvnw -DskipTests
+  #
+  - bash ./apps/spring-boot-entity-manager-h2-app/target/*.jar &
+  - wait_for 8080
+  - http :8080/auto message=h2-ololo
+  - http :8080/auto | jq
+  - stop_any 8080
+  #
+  - bash ./apps/spring-boot-entity-manager-mysql-app/target/*.jar &
+  - wait_for 8080
+  - http :8080/manual message=mysql-trololo
+  - http :8080/manual | jq
+  - stop_any 8080
+  #
+  - bash ./apps/spring-boot-entity-manager-postgres-app/target/*.jar &
+  - wait_for 8080
+  - http :8080/auto message=postgres-trololo
+  - http :8080/auto | jq
+  - stop_any 8080
+  #
+  - bash ./apps/spring-boot-spring-data-h2-app/target/*.jar &
+  - wait_for 8080
+  - http :8080/manual message=h2-spring-data-trololo
+  - http :8080/manual | jq
+  - stop_any 8080
+  #
+  - bash ./apps/spring-boot-spring-data-mysql-app/target/*.jar &
+  - wait_for 8080
+  - http :8080/auto message=mysql-spring-data-ololo
+  - http :8080/auto | jq
+  - stop_any 8080
+  #
+  - bash ./apps/spring-boot-spring-data-postgres-app/target/*.jar &
+  - wait_for 8080
+  - http :8080/manual message=postgres-spring-data-ololo
+  - http :8080/manual | jq
+  - stop_any 8080
+cache:
+  packages: true
+  npm: true
+  directories:
+    - ~/.m2/
+    - ~/.docker/
+    - ./node_modules/
+    - ~/.npm/
+#before_deploy:
+#  - npm i ; npm run gh-pages
+#deploy:
+#  provider: pages
+#  skip-cleanup: true
+#  local_dir: ./.vuepress/dist
+#  github-token: $GITHUB_TOKEN
+#  keep-history: true
+#  on:
+#    branch: master
+notifications:
+  email: false
+git:
+  depth: false
+  quiet: true

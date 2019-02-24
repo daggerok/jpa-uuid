@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+  <parent>
+    <artifactId>docker</artifactId>
+    <groupId>com.github.daggerok.jpauuid</groupId>
+    <version>1.0.0-SNAPSHOT</version>
+  </parent>
+
+  <modelVersion>4.0.0</modelVersion>
+  <name>${project.parent.artifactId}:${project.artifactId}</name>
+  <groupId>com.github.daggerok.jpauuid.docker</groupId>
+  <artifactId>h2</artifactId>
+  <packaging>pom</packaging>
+
+  <properties>
+    <h2.version>1.4.196</h2.version>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>com.h2database</groupId>
+      <artifactId>h2</artifactId>
+      <version>${h2.version}</version>
+    </dependency>
+  </dependencies>
+
+  <!-- https://www.baeldung.com/executable-jar-with-maven -->
+
+  <profiles>
+    <profile>
+      <id>copy</id>
+      <build>
+        <defaultGoal>process-resources</defaultGoal>
+      </build>
+    </profile>
+
+    <profile>
+      <id>start</id>
+      <build>
+        <defaultGoal>process-resources exec:exec</defaultGoal>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>exec-maven-plugin</artifactId>
+            <configuration>
+              <executable>java</executable>
+              <arguments><!-- http://www.h2database.com/javadoc/org/h2/tools/Server.html -->
+                <argument>-jar</argument>
+                <argument>${project.build.directory}/libs/h2-${h2.version}.jar</argument>
+                <argument>-tcp</argument>
+                <argument>-tcpAllowOthers</argument>
+                <argument>-web</argument>
+                <argument>-webDaemon</argument>
+                <argument>-webAllowOthers</argument>
+                <!--<argument>-browser</argument>-->
+                <!--<argument>-pg</argument>-->
+                <!--<argument>-pgDaemon</argument>-->
+                <!--<argument>-pgAllowOthers</argument>-->
+                <!--<argument>-pgPort</argument>
+                <argument>3456</argument>-->
+                <!--<argument>-trace</argument>-->
+                <!--<argument>-help</argument>-->
+              </arguments>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <profile>
+      <id>help</id>
+      <build>
+        <defaultGoal>process-resources exec:exec</defaultGoal>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>exec-maven-plugin</artifactId>
+            <configuration>
+              <executable>java</executable>
+              <arguments>
+                <argument>-jar</argument>
+                <argument>${project.build.directory}/libs/h2-${h2.version}.jar</argument>
+                <!--<argument>-browser</argument>-->
+                <argument>-help</argument>
+              </arguments>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <profile>
+      <id>up</id>
+      <build>
+        <defaultGoal>process-resources docker-compose:up</defaultGoal>
+      </build>
+    </profile>
+  </profiles>
+
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-dependency-plugin</artifactId>
+      </plugin>
+    </plugins>
+
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-dependency-plugin</artifactId>
+          <version>3.1.1</version>
+          <executions>
+            <execution>
+              <id>copy-dependencies</id>
+              <phase>process-resources</phase>
+              <goals>
+                <goal>copy-dependencies</goal>
+              </goals>
+              <configuration>
+                <outputDirectory>${project.build.directory}/libs</outputDirectory>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>exec-maven-plugin</artifactId>
+          <version>1.6.0</version>
+          <executions>
+            <execution>
+              <goals>
+                <goal>exec</goal>
+              </goals>
+            </execution>
+          </executions>
+          <configuration>
+            <async>false</async>
+            <keepAlive>true</keepAlive>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
+
+</project>

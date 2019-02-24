@@ -1,0 +1,38 @@
+version: '2.1'
+networks:
+  jpa-uuid:
+    driver: bridge
+services:
+#  mysql:
+#    image: healthcheck/mysql
+#    networks: [jpa-uuid]
+#    ports: ['3306:3306']
+#    environment:
+#      MYSQL_DATABASE: mysql
+#      MYSQL_USER: mysql
+#      MYSQL_PASSWORD: mysql
+#      MYSQL_ROOT_PASSWORD: mysql
+#      MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+#      MYSQL_RANDOM_ROOT_PASSWORD: 'no'
+#      #MYSQL_ONETIME_PASSWORD: ...
+#      #HTERE_ARE_NO_SUCH_ENV_VARIABLE: /var/lib/mysql
+  mysql:
+    image: mysql:8.0.15
+    networks: [jpa-uuid]
+    ports: ['3306:3306']
+    environment:
+      MYSQL_DATABASE: mysql
+      MYSQL_USER: mysql
+      MYSQL_PASSWORD: mysql
+      MYSQL_ROOT_PASSWORD: mysql
+      MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+      MYSQL_RANDOM_ROOT_PASSWORD: 'no'
+      #MYSQL_ONETIME_PASSWORD: ...
+      #HTERE_ARE_NO_SUCH_ENV_VARIABLE: /var/lib/mysql
+    healthcheck:
+      test: mysqladmin ping -h 127.0.0.1 -u $$MYSQL_USER --password=$$MYSQL_PASSWORD
+  docker-compose-maven-plugin-healthcheck-waiting-container:
+    image: busybox
+    depends_on:
+      mysql:
+        condition: service_healthy
